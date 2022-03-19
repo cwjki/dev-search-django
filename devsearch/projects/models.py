@@ -17,13 +17,41 @@ class Project(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True,
                           primary_key=True, editable=False)
 
+    #Many to Many relation
+    tags = models.ManyToManyField('Tag', blank=True)
+
     def __str__(self):
         return self.title
 
 
 class Review(models.Model):
+
+    VOTE_TYPE = (
+      ('up', 'up'),
+      ('down', 'down')
+    )
+
     # owner =
+    
+    body = models.TextField(null=True, blank=True)
+    value = models.CharField(max_length=50, choices=VOTE_TYPE)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True,
+                          primary_key=True, editable=False)
+
+    # One to Many relation
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, null=True, blank=True)
-    body = models.TextField(null=True, blank=True)
-    value = models.CharField(max_length=50)
+
+    def __str__(self):
+      return self.value
+
+class Tag(models.Model):
+  name = models.CharField(max_length=200)
+  created = models.DateTimeField(auto_now_add=True)
+  id = models.UUIDField(default=uuid.uuid4, unique=True,
+                        primary_key=True, editable=False)
+
+  def __str__(self):
+      return self.name

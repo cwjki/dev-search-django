@@ -1,39 +1,17 @@
 from multiprocessing import context
 from django.shortcuts import render
-
-
-projectList = [
-  {
-    'id': '1',
-    'title': 'Ecommerce Website',
-    'description': 'Fully functional blah'    
-  },
-  {
-      'id': '2',
-      'title': 'Portafolio Website',
-      'description': 'A personal blah'
-  },
-  {
-      'id': '3',
-      'title': 'Social Network',
-      'description': 'An open source blah'
-  },
-]
+from .models import Project
 
 
 def projects(request):
-    name = 'Dennis Ivanov'
-
-    context = {'projects': projectList}
+    projects = Project.objects.all()
+    context = {'projects': projects}
     return render(request, 'projects/projects.html', context)
 
 
 def project(request, pk):
-    projectObject = None
-    for i in projectList:
-      if i['id'] == str(pk):
-        projectObject = i
-    
-    context = {'project': projectObject}
+    projectObj = Project.objects.get(id=pk)
+    tags = projectObj.tags.all()
+    reviews = projectObj.review_set.all()
+    context = {'project': projectObj, 'tags': tags, 'reviews': reviews}
     return render(request, 'projects/singleProject.html', context)
-  
